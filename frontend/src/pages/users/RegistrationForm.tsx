@@ -8,10 +8,11 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import MySnackbar from "../../components/snackbar";
-import { addUserThunk, updateUserThunk } from "../../store/thunk/userThunk";
-import { useAppDispatch, useAppSelector } from "../../store/store";
+import MySnackbar from "../../components/snackbar"; // Importing a custom snackbar component
+import { addUserThunk, updateUserThunk } from "../../store/thunk/userThunk"; // Importing thunks for adding and updating users
+import { useAppDispatch, useAppSelector } from "../../store/store"; // Importing custom hooks for Redux
 
+// Interface for form data
 interface FormData {
   id?: string;
   first_name: string;
@@ -24,6 +25,7 @@ interface FormData {
   password: string;
 }
 
+// Interface for form errors
 interface Errors {
   first_name: string;
   email: string;
@@ -32,13 +34,16 @@ interface Errors {
 }
 
 interface Props {
-  data: any;
-  handleCloseDialog: Function;
+  data: any; // Data for pre-filled form (if editing)
+  handleCloseDialog: Function; // Function to close the dialog/modal
 }
 
+// RegistrationForm component
 const RegistrationForm: React.FC<Props> = ({ data, handleCloseDialog }) => {
-  const dispatch = useAppDispatch();
-  let userToken = useAppSelector((state) => state.authSlice.userData.token);
+  const dispatch = useAppDispatch(); // Redux dispatch function
+  let userToken = useAppSelector((state) => state.authSlice.userData.token); // Fetching user token from Redux store
+
+  // State for form data
   const [formData, setFormData] = useState<FormData>(
     data?.id
       ? data
@@ -55,6 +60,7 @@ const RegistrationForm: React.FC<Props> = ({ data, handleCloseDialog }) => {
         }
   );
 
+  // State for form errors
   const [errors, setErrors] = useState<Errors>({
     first_name: "",
     email: "",
@@ -62,10 +68,12 @@ const RegistrationForm: React.FC<Props> = ({ data, handleCloseDialog }) => {
     password: "",
   });
 
+  // Handle form field changes
   const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
@@ -88,6 +96,7 @@ const RegistrationForm: React.FC<Props> = ({ data, handleCloseDialog }) => {
     }
   };
 
+  // Validate form fields
   const validateForm = (): boolean => {
     let valid = true;
     const newErrors: any = {};
@@ -120,6 +129,7 @@ const RegistrationForm: React.FC<Props> = ({ data, handleCloseDialog }) => {
     return valid;
   };
 
+  // Validate email format
   const isValidEmail = (email: string): boolean => {
     // Basic email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -129,6 +139,7 @@ const RegistrationForm: React.FC<Props> = ({ data, handleCloseDialog }) => {
   return (
     <form onSubmit={handleSubmit}>
       <Grid container spacing={2}>
+        {/* First Name Field */}
         <Grid item sm={12} md={6}>
           <TextField
             fullWidth
@@ -140,6 +151,7 @@ const RegistrationForm: React.FC<Props> = ({ data, handleCloseDialog }) => {
             helperText={errors.first_name}
           />
         </Grid>
+        {/* Last Name Field */}
         <Grid item sm={12} md={6}>
           <TextField
             fullWidth
@@ -149,6 +161,7 @@ const RegistrationForm: React.FC<Props> = ({ data, handleCloseDialog }) => {
             onChange={handleChange}
           />
         </Grid>
+        {/* Email Field */}
         <Grid item sm={12} md={6}>
           <TextField
             fullWidth
@@ -161,6 +174,7 @@ const RegistrationForm: React.FC<Props> = ({ data, handleCloseDialog }) => {
             helperText={errors.email}
           />
         </Grid>
+        {/* Username Field */}
         <Grid item sm={12} md={6}>
           <TextField
             fullWidth
@@ -172,6 +186,7 @@ const RegistrationForm: React.FC<Props> = ({ data, handleCloseDialog }) => {
             helperText={errors.username}
           />
         </Grid>
+        {/* Role Selection Field */}
         <Grid item sm={12} md={6}>
           <FormControl fullWidth>
             <InputLabel id="role-label">Role</InputLabel>
@@ -188,6 +203,7 @@ const RegistrationForm: React.FC<Props> = ({ data, handleCloseDialog }) => {
             </Select>
           </FormControl>
         </Grid>
+        {/* Mobile Field */}
         <Grid item sm={12} md={6}>
           <TextField
             fullWidth
@@ -198,6 +214,7 @@ const RegistrationForm: React.FC<Props> = ({ data, handleCloseDialog }) => {
             onChange={handleChange}
           />
         </Grid>
+        {/* Date of Birth Field */}
         <Grid item sm={12} md={6}>
           <TextField
             fullWidth
@@ -209,6 +226,7 @@ const RegistrationForm: React.FC<Props> = ({ data, handleCloseDialog }) => {
             onChange={handleChange}
           />
         </Grid>
+        {/* Password Field (only for new users) */}
         {!data?.id && (
           <Grid item sm={12} md={6}>
             <TextField
@@ -223,6 +241,7 @@ const RegistrationForm: React.FC<Props> = ({ data, handleCloseDialog }) => {
             />
           </Grid>
         )}
+        {/* Submit Button */}
         <Grid item xs={12}>
           <Button variant="contained" color="primary" type="submit">
             Submit

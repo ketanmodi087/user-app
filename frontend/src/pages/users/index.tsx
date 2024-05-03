@@ -7,6 +7,7 @@ import { Delete, Edit } from "@mui/icons-material";
 import { deleteUserThunk, getUserThunk } from "../../store/thunk/userThunk";
 import { useAppDispatch, useAppSelector } from "../../store/store";
 
+// Define the shape of a user object
 interface User {
   id: number;
   first_name: string;
@@ -20,23 +21,29 @@ interface User {
 }
 
 const UsersList: React.FC = () => {
+  // Redux hooks for dispatching actions and accessing state
   const dispatch = useAppDispatch();
-  const [data, setData] = useState<User[]>([]);
-  const [totalRows, setTotalRows] = useState(0);
-  const [userData, setUserData] = useState<any>({});
   const userList = useAppSelector((state) => state.usersSlice.userList);
   const userToken = useAppSelector((state) => state.authSlice.userData.token);
+  const [totalRows, setTotalRows] = useState(0);
+
+  // State variables to manage data and dialog visibility
+  const [data, setData] = useState<User[]>([]);
+  const [userData, setUserData] = useState<any>({});
   const [openDialog, setOpenDialog] = useState(false);
   const [openDialogDelete, setOpenDialogDelete] = useState(false);
 
+  // Effect to update data when userList changes
   useEffect(() => {
     setData(userList);
   }, [userList]);
 
+  // Effect to fetch user data on component mount
   useEffect(() => {
     dispatch(getUserThunk({ token: userToken }));
   }, []);
 
+  // Open edit user dialog
   const handleOpenDialog = (value?: any) => {
     setOpenDialog(true);
     if (value) {
@@ -46,11 +53,13 @@ const UsersList: React.FC = () => {
     }
   };
 
+  // Close edit user dialog
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setUserData(null);
   };
 
+  // Open delete user dialog
   const handleOpenDialogDelete = (value?: any) => {
     setOpenDialogDelete(true);
     if (value) {
@@ -60,16 +69,18 @@ const UsersList: React.FC = () => {
     }
   };
 
+  // Close delete user dialog
   const handleCloseDialogDelete = () => {
     setOpenDialogDelete(false);
     setUserData(null);
   };
 
+  // Confirm user deletion
   const handleConfirmAction = () => {
     handleCloseDialogDelete();
     dispatch(
       deleteUserThunk({
-        token:userToken,
+        token: userToken,
         payload: {
           id: userData.id,
         },
@@ -77,6 +88,7 @@ const UsersList: React.FC = () => {
     );
   };
 
+  // Table columns configuration
   const columns = [
     { name: "first_name", label: "First Name" },
     { name: "last_name", label: "Last Name" },
@@ -92,12 +104,14 @@ const UsersList: React.FC = () => {
         customBodyRender: (value: any) => {
           return (
             <div>
+              {/* Edit user button */}
               <IconButton
                 onClick={() => handleOpenDialog(value)}
                 aria-label="Edit"
               >
                 <Edit color="primary" />
               </IconButton>
+              {/* Delete user button */}
               <IconButton
                 onClick={() => handleOpenDialogDelete(value)}
                 aria-label="Delete"
@@ -113,6 +127,7 @@ const UsersList: React.FC = () => {
 
   return (
     <>
+      {/* Dialog for adding/editing user */}
       <ReusableDialog
         open={openDialog}
         handleClose={handleCloseDialog}
@@ -120,6 +135,7 @@ const UsersList: React.FC = () => {
         content={<RegistrationForm data={userData} handleCloseDialog={handleCloseDialog} />}
         actions={[]}
       />
+      {/* Dialog for confirming user deletion */}
       <ReusableDialog
         open={openDialogDelete}
         handleClose={handleCloseDialogDelete}
@@ -134,6 +150,7 @@ const UsersList: React.FC = () => {
           { label: "Confirm", onClick: handleConfirmAction },
         ]}
       />
+      {/* Server side data table */}
       <ServerSideDataTable
         columns={columns}
         options={{
@@ -142,6 +159,7 @@ const UsersList: React.FC = () => {
           count: totalRows,
           selectableRows: "none",
           customToolbar: () => (
+            // Button to add new user
             <Button onClick={handleOpenDialog}>Add New User</Button>
           ),
         }}
@@ -153,4 +171,3 @@ const UsersList: React.FC = () => {
 };
 
 export default UsersList;
-

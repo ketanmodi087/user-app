@@ -12,21 +12,23 @@ import { useAppDispatch, useAppSelector } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage: React.FC = () => {
-  const dispatch: any = useAppDispatch();
-  const navigate = useNavigate();
-  const [username, setUsername] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const dispatch: any = useAppDispatch(); // Getting the dispatch function from Redux
+  const navigate = useNavigate(); // Getting the navigation function from react-router-dom
+  const [username, setUsername] = useState<string>(""); // State for username input
+  const [password, setPassword] = useState<string>(""); // State for password input
+  const [errors, setErrors] = useState<{ [key: string]: string }>({}); // State for form validation errors
 
-  let userToken = useAppSelector((state) => state.authSlice.userData.token);
+  let userToken = useAppSelector((state) => state.authSlice.userData.token); // Getting user token from Redux store
 
   useEffect(() => {
+    // Redirect to "/users" page if userToken exists
     if (userToken) {
       navigate("/users");
     }
   }, [userToken]);
 
   const validateForm = (): boolean => {
+    // Function to validate the form inputs
     const errors: { [key: string]: string } = {};
     if (username.trim() === "") {
       errors.username = "Username is required";
@@ -39,12 +41,10 @@ const LoginPage: React.FC = () => {
   };
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>): void => {
+    // Function to handle form submission (login)
     e.preventDefault();
     if (validateForm()) {
-      // Here you can implement your login logic
-      console.log("Username:");
-      console.log("Password:");
-
+      // If form is valid, dispatch login action
       dispatch(
         loginUserThunk({
           payload: {
@@ -63,6 +63,7 @@ const LoginPage: React.FC = () => {
           Login
         </Typography>
         <form onSubmit={handleLogin}>
+          {/* Form fields for username and password */}
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
@@ -88,6 +89,7 @@ const LoginPage: React.FC = () => {
               />
             </Grid>
           </Grid>
+          {/* Login button */}
           <Button
             type="submit"
             variant="contained"
